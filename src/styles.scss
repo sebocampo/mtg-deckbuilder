@@ -1,22 +1,28 @@
+:root {
+  --background: #0d1019;
+  --surface: #1b2030;
+  --text: #f4f4f8;
+  --muted: #929aaf;
+  --accent: #a78bfa;
+}
 
 * {
-    box-sizing: border-box;
-  }
-  
-  html,
-  body {
-    margin: 0;
-    min-height: 100%;
-  }
-  
-  body {
-    background: #0d1019;
-    font-family: Inter, system-ui, -apple-system,
-      BlinkMacSystemFont, "Segoe UI", sans-serif;
-  }
-  
-  button,
-  input {
-    font: inherit;
-  }
-  
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: #0d1019;
+  font-family: Inter, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button,
+input {
+  font: inherit;
+}
