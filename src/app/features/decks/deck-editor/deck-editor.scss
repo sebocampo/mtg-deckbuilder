@@ -1,0 +1,27 @@
+
+.editor-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.back-link {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+h1 {
+  margin-top: 32px;
+}
+
+button {
+  padding: 12px 18px;
+  border-radius: 10px;
+  border: none;
+  background: var(--accent);
+  color: white;
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}

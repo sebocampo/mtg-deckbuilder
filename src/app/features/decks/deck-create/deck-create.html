@@ -1,0 +1,38 @@
+
+<main class="create-page">
+  <a routerLink="/decks" class="back-link">
+    ← Back to Decks
+  </a>
+
+  <div class="create-panel">
+    <p class="eyebrow">NEW COMMANDER DECK</p>
+
+    <h1>Create Your Deck</h1>
+
+    <p class="subtitle">
+      Every great deck starts with an idea.
+    </p>
+
+    <form (ngSubmit)="createDeck()">
+      <label for="deck-name">Deck Name</label>
+
+      <input
+        id="deck-name"
+        type="text"
+        name="deckName"
+        [ngModel]="deckName()"
+        (ngModelChange)="deckName.set($event)"
+        placeholder="e.g. Goblin Mayhem"
+        maxlength="60"
+        required
+      />
+
+      <button
+        type="submit"
+        class="create-button"
+        [disabled]="!deckName().trim()">
+        Create Deck
+      </button>
+    </form>
+  </div>
+</main>

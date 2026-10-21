@@ -1,0 +1,25 @@
+
+<main class="editor-page">
+  <a routerLink="/decks" class="back-link">
+    ← Back to Decks
+  </a>
+
+  @if (deck(); as currentDeck) {
+    <h1>{{ currentDeck.name }}</h1>
+
+    <p>
+      {{ currentDeck.cards.length }} unique card entries
+    </p>
+
+    <p>Commander:
+      {{ currentDeck.commander ? 'Selected' : 'Not selected' }}
+    </p>
+
+    <button disabled>
+      + Add Cards (Coming Next)
+    </button>
+  } @else {
+    <h1>Deck not found</h1>
+    <p>This deck doesn't exist or hasn't been loaded.</p>
+  }
+</main>

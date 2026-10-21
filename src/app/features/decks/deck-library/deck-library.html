@@ -7,40 +7,26 @@
                 Build, customize, and master your decks.
             </p>
         </div>
-
-        <button class="create-button" disabled title="Deck creation is coming in the next step">
+        <a class="create-button" routerLink="/decks/new">
             + Create Deck
-        </button>
+        </a>
     </section>
-
     <section class="decks-grid">
-        @for (deck of decks; track deck.id) {
-        <article class="deck-card">
-            <div class="deck-art">
-                <img [src]="deck.image" [alt]="deck.commander" />
-
-                <span class="format-tag">COMMANDER</span>
-            </div>
-
+        @for (deck of decks(); track deck.id) {
+        <a class="deck-card deck-link" [routerLink]="['/decks', deck.id]">
             <div class="deck-info">
                 <h2>{{ deck.name }}</h2>
-                <p>{{ deck.commander }}</p>
-
-                <div class="deck-footer">
-                    <div class="mana-colors">
-                        @for (color of deck.colors; track color) {
-                        <span class="mana" [class]="'mana-' + color">
-                            {{ color }}
-                        </span>
-                        }
-                    </div>
-
-                    <span class="card-count">
-                        {{ deck.cardCount }}/100 Cards
-                    </span>
-                </div>
+                <p>{{ deck.cards.length }} unique card entries</p>
+                <p>
+                    {{ deck.commander ? 'Commander selected' : 'No commander yet' }}
+                </p>
             </div>
-        </article>
+        </a>
+        } @empty {
+        <p class="subtitle">
+            No decks yet. Create your first Commander deck!
+        </p>
         }
     </section>
+
 </main>
