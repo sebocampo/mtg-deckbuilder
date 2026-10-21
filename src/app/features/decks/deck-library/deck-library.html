@@ -2,9 +2,8 @@
     <section class="page-heading">
         <div>
             <p class="eyebrow">YOUR COLLECTION</p>
-            <h1>My Decks</h1>
             <p class="subtitle">
-                Build, customize, and master your decks.
+                Manage all of your decks.
             </p>
         </div>
         <a class="create-button" routerLink="/decks/new">
@@ -16,7 +15,7 @@
         <a class="deck-card deck-link" [routerLink]="['/decks', deck.id]">
             <div class="deck-info">
                 <h2>{{ deck.name }}</h2>
-                <p>{{ deck.cards.length }} unique card entries</p>
+                <p>{{ deck.cards.length }} cards</p>
                 <p>
                     {{ deck.commander ? 'Commander selected' : 'No commander yet' }}
                 </p>
