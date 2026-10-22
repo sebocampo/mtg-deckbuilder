@@ -1,0 +1,150 @@
+
+.search-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.eyebrow {
+  color: var(--accent);
+  font-size: 11px;
+  letter-spacing: 2px;
+  font-weight: 800;
+}
+
+h1 {
+  margin: 8px 0;
+  font-size: 34px;
+}
+
+.subtitle {
+  color: var(--muted);
+}
+
+.search-field {
+  margin: 28px 0;
+
+  input {
+    width: 100%;
+    padding: 16px 18px;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid #41465c;
+    border-radius: 12px;
+    outline: none;
+    font-size: 16px;
+
+    &:focus {
+      border-color: var(--accent);
+    }
+  }
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.card-result {
+  background: transparent;
+  color: var(--text);
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  min-width: 0;
+
+  img {
+    width: 100%;
+    aspect-ratio: 488 / 680;
+    object-fit: contain;
+    border-radius: 10px;
+    transition: transform 150ms ease;
+  }
+
+  &:hover img {
+    transform: translateY(-5px);
+  }
+}
+
+.card-name {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.image-placeholder {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 488 / 680;
+  padding: 12px;
+  background: var(--surface);
+  border-radius: 10px;
+}
+
+.status-message {
+  padding: 48px 16px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.preview-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.85);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.preview-panel {
+  width: min(100%, 380px);
+  max-height: 90dvh;
+  overflow: auto;
+  background: var(--surface);
+  padding: 20px;
+  border-radius: 18px;
+  text-align: center;
+
+  img {
+    display: block;
+    width: min(100%, 280px);
+    margin: 0 auto;
+  }
+
+  h2 {
+    margin-bottom: 4px;
+  }
+
+  p {
+    color: var(--muted);
+  }
+}
+
+.close-button {
+  display: block;
+  margin-left: auto;
+  margin-bottom: 16px;
+  background: transparent;
+  border: 0;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+@media (max-width: 700px) {
+  .search-page {
+    padding: 24px 16px;
+  }
+
+  .card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+}

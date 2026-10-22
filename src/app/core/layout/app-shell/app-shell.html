@@ -10,10 +10,25 @@
 
     <router-outlet />
 
+
     <nav class="bottom-nav">
-        <a routerLink="/decks" routerLinkActive="active" class="nav-item">
-            <span class="nav-icon">▦</span>
-            <span>Decks</span>
-        </a>
+        <div class="nav-content">
+            <!-- Deck Library -->
+            <a routerLink="/decks" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }"
+                class="nav-item" aria-label="My Decks">
+
+                <span class="nav-icon">▦</span>
+                <span>Decks</span>
+            </a>
+
+            <!-- Card Search -->
+            <a routerLink="/search" routerLinkActive="active" class="nav-item" aria-label="Search Cards">
+
+                <span class="nav-icon">⌕</span>
+                <span>Search</span>
+            </a>
+
+        </div>
     </nav>
+
 </div>

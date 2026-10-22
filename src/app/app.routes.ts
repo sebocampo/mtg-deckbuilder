@@ -19,6 +19,12 @@ export const routes: Routes = [
                     import('./features/decks/decks.routes')
                         .then(m => m.DECK_ROUTES),
             },
+            {
+                path: 'search',
+                loadComponent: () =>
+                    import('./features/cards/card-search/card-search')
+                        .then(m => m.CardSearch),
+            }
         ],
     },
 ];

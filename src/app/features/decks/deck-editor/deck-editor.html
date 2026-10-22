@@ -1,25 +1,30 @@
-
 <main class="editor-page">
   <a routerLink="/decks" class="back-link">
     ← Back to Decks
   </a>
 
   @if (deck(); as currentDeck) {
-    <h1>{{ currentDeck.name }}</h1>
+  <h1>{{ currentDeck.name }}</h1>
 
-    <p>
-      {{ currentDeck.cards.length }} cards
-    </p>
+  <p>
+    {{ currentDeck.cards.length }} cards
+  </p>
 
-    <p>Commander:
-      {{ currentDeck.commander ? 'Selected' : 'Not selected' }}
-    </p>
+  <p>Commander:
+    {{ currentDeck.commander ? 'Selected' : 'Not selected' }}
+  </p>
 
-    <button disabled>
-      + Add Cards (Coming Next)
-    </button>
+  <button disabled>
+    + Add Cards (Coming Next)
+  </button>
+
+
+  <button type="button" (click)="testScryfall()">
+    Test Scryfall API
+  </button>
+
   } @else {
-    <h1>Deck not found</h1>
-    <p>This deck doesn't exist or hasn't been loaded.</p>
+  <h1>Deck not found</h1>
+  <p>This deck doesn't exist or hasn't been loaded.</p>
   }
 </main>
