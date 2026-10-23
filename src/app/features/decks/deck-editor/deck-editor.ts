@@ -4,45 +4,63 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DeckStore } from '../data-access/deck.store';
 import { ScryfallService } from '../../cards/data-access/scryfall';
 import { take } from 'rxjs';
-
-
+import { toObservable } from '@angular/core/rxjs-interop';
+import { forkJoin, of, switchMap, catchError, map } from 'rxjs';
+import { MtgCard } from '../../cards/models/mtg-card.model';
+import { AsyncPipe } from '@angular/common';
 @Component({
   selector: 'app-deck-editor',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, AsyncPipe],
   templateUrl: './deck-editor.html',
   styleUrl: './deck-editor.scss',
 })
 export class DeckEditor {
   private readonly route = inject(ActivatedRoute);
   private readonly deckStore = inject(DeckStore);
-
-  readonly deckId = this.route.snapshot.paramMap.get('id');
-
+  private readonly scryfall = inject(ScryfallService);
   readonly deck = computed(() =>
     this.deckStore.decks().find(d => d.id === this.deckId)
   );
 
+  // Convert our reactive deck signal into an Observable.
+  private readonly deck$ = toObservable(this.deck);
 
-  private readonly scryfall = inject(ScryfallService);
+  // Retrieve full card information when the deck changes.
+  readonly cards$ = this.deck$.pipe(
+    switchMap(deck => {
+      if (!deck || deck.cards.length === 0) {
+        return of([]);
+      }
 
-  testScryfall(): void {
-    this.scryfall.searchCards('sol ring')
-      .pipe(take(1))
-      .subscribe({
-        next: response => {
-          console.log(
-            'Scryfall returned:',
-            response.total_cards,
-            'cards'
-          );
+      return forkJoin(
+        deck.cards.map(entry =>
+          this.scryfall.getCard(entry.scryfallId).pipe(
+            map(card => ({
+              ...card,
+              quantity: entry.quantity
+            })),
+            catchError(() => of(null))
+          )
+        )
+      ).pipe(
+        map(cards =>
+          cards.filter(
+            (card): card is MtgCard & { quantity: number } =>
+              card !== null
+          )
+        )
+      );
+    })
+  );
 
-          console.log('First card:', response.data[0]);
-        },
-        error: error => {
-          console.error('Scryfall request failed:', error);
-        }
-      });
+  readonly deckId = this.route.snapshot.paramMap.get('id');
+
+  removeCard(scryfallId: string): void {
+    if (!this.deckId) return;
+
+    this.deckStore.removeCard(this.deckId, scryfallId);
   }
+
 
 }

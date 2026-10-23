@@ -14,14 +14,54 @@
     {{ currentDeck.commander ? 'Selected' : 'Not selected' }}
   </p>
 
-  <button disabled>
-    + Add Cards (Coming Next)
-  </button>
+
+  <a class="add-cards-button" [routerLink]="['/decks', deckId, 'add-cards']">
+    + Add Cards
+  </a>
+
+<section class="deck-cards">
+  <h2>Cards in Deck</h2>
+
+  @if (cards$ | async; as cards) {
+    <div class="card-grid">
+      @for (card of cards; track card.id) {
+        <div class="deck-card-tile">
+
+          @if (card.image_uris?.normal; as image) {
+            <img
+              [src]="image"
+              [alt]="card.name"
+              loading="lazy"
+            />
+          } @else if (card.card_faces?.[0]?.image_uris?.normal; as image) {
+            <img
+              [src]="image"
+              [alt]="card.name"
+              loading="lazy"
+            />
+          }
+
+          <div class="card-details">
+            <span>{{ card.name }}</span>
+            <span>×{{ card.quantity }}</span>
+          </div>
+
+          <button
+            type="button"
+            (click)="removeCard(card.id)">
+            Remove
+          </button>
+        </div>
+      } @empty {
+        <p>No cards added yet.</p>
+      }
+    </div>
+  } @else {
+    <p>Loading cards...</p>
+  }
+</section>
 
 
-  <button type="button" (click)="testScryfall()">
-    Test Scryfall API
-  </button>
 
   } @else {
   <h1>Deck not found</h1>

@@ -15,6 +15,12 @@ export const DECK_ROUTES: Routes = [
         .then(m => m.DeckCreate),
   },
   {
+    path: ':id/add-cards',
+    loadComponent: () =>
+      import('../cards/card-search/card-search')
+        .then(m => m.CardSearch),
+  },
+  {
     path: ':id',
     loadComponent: () =>
       import('./deck-editor/deck-editor')
