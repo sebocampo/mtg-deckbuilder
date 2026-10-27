@@ -98,15 +98,16 @@ export class CardSearch {
   }
 
 
-openPreview(card: MtgCard): void {
-  this.addedMessage.set('');
-  this.selectedCard.set(card);
-}
+  openPreview(card: MtgCard): void {
+    this.addedMessage.set('');
+    this.selectedCard.set(card);
+  }
 
-closePreview(): void {
-  this.selectedCard.set(null);
-  this.addedMessage.set('');
-}
+  closePreview(): void {
+    this.selectedCard.set(null);
+    this.addedMessage.set('');
+  }
+
 
 
 
@@ -122,8 +123,13 @@ closePreview(): void {
       quantity: 1
     });
 
+    // Close the preview.
+    this.selectedCard.set(null);
+
+    // Keep the search results visible.
     this.addedMessage.set(`${card.name} added to deck!`);
   }
+
 
 
   backToDeck(): void {

@@ -1,15 +1,34 @@
 <main class="search-page">
   <div class="page-heading">
+    @if (isDeckMode && currentDeck) {
+    <button type="button" class="return-link" (click)="backToDeck()">
+      ← Return to {{ currentDeck.name }}
+    </button>
+    <p class="eyebrow">DECK BUILDER</p>
+    <h1>Add Cards to Deck</h1>
+    <p class="subtitle">
+      Search cards to add to {{ currentDeck.name }}.
+    </p>
+    } @else {
     <p class="eyebrow">MAGIC CARD DATABASE</p>
     <h1>Discover Cards</h1>
     <p class="subtitle">
       Search Magic: The Gathering cards.
     </p>
+    }
   </div>
+
 
   <div class="search-field">
     <input type="search" [formControl]="searchControl" placeholder="Search for Sol Ring, Atraxa..."
       aria-label="Search Magic cards" />
+
+    @if (addedMessage()) {
+    <p class="success-message" role="status">
+      {{ addedMessage() }}
+    </p>
+    }
+
   </div>
 
   @if (results$ | async; as results) {
@@ -83,12 +102,6 @@
         <button type="button" class="add-button" (click)="addCardToDeck(card)">
           + Add to Deck
         </button>
-
-        @if (addedMessage()) {
-        <p class="success-message" role="status">
-          {{ addedMessage() }}
-        </p>
-        }
 
         <button type="button" class="back-button" (click)="backToDeck()">
           Back to Deck

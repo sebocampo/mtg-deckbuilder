@@ -2,7 +2,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DeckStore } from '../data-access/deck.store';
-import { ScryfallService } from '../../cards/data-access/scryfall';
+import { CardCacheService } from '../../cards/data-access/card-cache';
 import { take } from 'rxjs';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { forkJoin, of, switchMap, catchError, map } from 'rxjs';
@@ -18,7 +18,7 @@ import { AsyncPipe } from '@angular/common';
 export class DeckEditor {
   private readonly route = inject(ActivatedRoute);
   private readonly deckStore = inject(DeckStore);
-  private readonly scryfall = inject(ScryfallService);
+  private readonly cardCache = inject(CardCacheService);
   readonly deck = computed(() =>
     this.deckStore.decks().find(d => d.id === this.deckId)
   );
@@ -26,7 +26,6 @@ export class DeckEditor {
   // Convert our reactive deck signal into an Observable.
   private readonly deck$ = toObservable(this.deck);
 
-  // Retrieve full card information when the deck changes.
   readonly cards$ = this.deck$.pipe(
     switchMap(deck => {
       if (!deck || deck.cards.length === 0) {
@@ -35,7 +34,7 @@ export class DeckEditor {
 
       return forkJoin(
         deck.cards.map(entry =>
-          this.scryfall.getCard(entry.scryfallId).pipe(
+          this.cardCache.getCard(entry.scryfallId).pipe(
             map(card => ({
               ...card,
               quantity: entry.quantity
