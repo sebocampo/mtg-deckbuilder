@@ -8,6 +8,16 @@ public class CreateDeckRequest {
     @Size(max = 100)
     private String name;
 
+    private String commanderScryfallId;
+
+    public String getCommanderScryfallId() {
+        return commanderScryfallId;
+    }
+
+    public void setCommanderScryfallId(String commanderScryfallId) {
+        this.commanderScryfallId = commanderScryfallId;
+    }
+
     public String getName() {
         return name;
     }
