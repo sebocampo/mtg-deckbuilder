@@ -10,8 +10,7 @@ import java.util.UUID;
 public interface DeckCardRepository
         extends JpaRepository<DeckCardEntity, UUID> {
 
-    Optional<DeckCardEntity> findByDeck_IdAndScryfallId(
-        UUID deckId,
-        UUID scryfallId
-    );
+    Optional<DeckCardEntity> findByDeck_IdAndOracleId(
+            UUID deckId,
+            UUID oracleId);
 }

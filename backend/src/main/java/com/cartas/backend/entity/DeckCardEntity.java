@@ -16,6 +16,9 @@ public class DeckCardEntity {
     @JoinColumn(name = "deck_id", nullable = false)
     private DeckEntity deck;
 
+    @Column(name = "oracle_id", nullable = false)
+    private UUID oracleId;
+
     @Column(name = "scryfall_id", nullable = false)
     private UUID scryfallId;
 
@@ -26,13 +29,18 @@ public class DeckCardEntity {
         // Required by JPA
     }
 
-    public DeckCardEntity(UUID scryfallId, int quantity) {
+    public DeckCardEntity(UUID scryfallId, UUID oracleId, int quantity) {
         this.scryfallId = scryfallId;
+        this.oracleId = oracleId;
         this.quantity = quantity;
     }
 
     public UUID getId() {
         return id;
+    }
+
+    public UUID getOracleId() {
+        return oracleId;
     }
 
     public DeckEntity getDeck() {
