@@ -33,7 +33,7 @@ public class DeckController {
     @PostMapping
     public ResponseEntity<DeckResponse> createDeck(
             @Valid @RequestBody CreateDeckRequest request) {
-        DeckEntity deck = deckService.createDeck(request.getName());
+        DeckEntity deck = deckService.createDeck(request.getName(), request.getCommanderScryfallId());
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(deck));
     }
 
@@ -48,11 +48,9 @@ public class DeckController {
 
     @GetMapping("/{id}")
     public ResponseEntity<DeckResponse> getDeck(@PathVariable UUID id) {
-        var deck = deckService.getDeck(id);
-        if (deck.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(toResponse(deck.get()));
+        return ResponseEntity.of(
+            deckService.getDeck(id).map(DeckController::toResponse)
+        );
     }
 
     private static DeckResponse toResponse(DeckEntity deck) {

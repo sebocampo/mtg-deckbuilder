@@ -1,5 +1,7 @@
 package com.cartas.backend.decks.controller.dto;
 
+import java.util.UUID;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -8,13 +10,13 @@ public class CreateDeckRequest {
     @Size(max = 100)
     private String name;
 
-    private String commanderScryfallId;
+    private UUID commanderScryfallId;
 
-    public String getCommanderScryfallId() {
+    public UUID getCommanderScryfallId() {
         return commanderScryfallId;
     }
 
-    public void setCommanderScryfallId(String commanderScryfallId) {
+    public void setCommanderScryfallId(UUID commanderScryfallId) {
         this.commanderScryfallId = commanderScryfallId;
     }
 
