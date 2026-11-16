@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.cartas.backend.decks.model.DeckFormat;
 import com.cartas.backend.decks.repository.DeckRepository;
 import com.cartas.backend.entity.DeckEntity;
 
@@ -21,9 +22,10 @@ public class DeckService {
     }
 
     @Transactional
-    public DeckEntity createDeck(String name, UUID commanderScryfallId) {
+    public DeckEntity createDeck(String name, UUID commanderScryfallId, DeckFormat format) {
         DeckEntity deck = new DeckEntity(name);
         deck.setCommanderScryfallId(commanderScryfallId);
+        deck.setFormat(format);
         return deckRepository.save(deck);
     }
 

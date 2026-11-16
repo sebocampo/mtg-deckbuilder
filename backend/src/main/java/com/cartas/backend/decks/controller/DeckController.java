@@ -19,7 +19,6 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-
 @RestController
 @RequestMapping("/api/decks")
 public class DeckController {
@@ -33,7 +32,8 @@ public class DeckController {
     @PostMapping
     public ResponseEntity<DeckResponse> createDeck(
             @Valid @RequestBody CreateDeckRequest request) {
-        DeckEntity deck = deckService.createDeck(request.getName(), request.getCommanderScryfallId());
+        DeckEntity deck = deckService.createDeck(request.getName(),
+                request.getCommanderScryfallId(), request.getFormat());
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(deck));
     }
 
@@ -49,14 +49,14 @@ public class DeckController {
     @GetMapping("/{id}")
     public ResponseEntity<DeckResponse> getDeck(@PathVariable UUID id) {
         return ResponseEntity.of(
-            deckService.getDeck(id).map(DeckController::toResponse)
-        );
+                deckService.getDeck(id).map(DeckController::toResponse));
     }
 
     private static DeckResponse toResponse(DeckEntity deck) {
         return new DeckResponse(
                 deck.getId(),
                 deck.getName(),
+                deck.getFormat(),
                 deck.getCommanderScryfallId(),
                 deck.getCreatedAt(),
                 deck.getUpdatedAt());

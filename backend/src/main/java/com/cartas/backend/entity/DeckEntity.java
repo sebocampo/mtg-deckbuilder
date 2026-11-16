@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.cartas.backend.decks.model.DeckFormat;
+
 @Entity
 @Table(name = "decks")
 public class DeckEntity {
@@ -18,6 +20,10 @@ public class DeckEntity {
 
     @Column(name = "name", nullable = false, length = 100)
     private String name;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "format", nullable = false, length = 30)
+    private DeckFormat format = DeckFormat.COMMANDER;
 
     @Column(name = "commander_scryfall_id")
     private UUID commanderScryfallId;
@@ -75,6 +81,14 @@ public class DeckEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public DeckFormat getFormat() {
+        return format;
+    }
+    
+    public void setFormat(DeckFormat format) {
+        this.format = format;
     }
 
     public UUID getCommanderScryfallId() {
