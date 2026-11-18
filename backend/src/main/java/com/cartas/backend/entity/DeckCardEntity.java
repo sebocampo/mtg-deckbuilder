@@ -4,6 +4,7 @@ package com.cartas.backend.entity;
 import jakarta.persistence.*;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 @Entity
@@ -43,6 +44,18 @@ public class DeckCardEntity {
         this.quantity = quantity;
     }
 
+    @PrePersist
+    protected void onCreate() {
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = OffsetDateTime.now(ZoneOffset.UTC);
+    }
+
     public UUID getId() {
         return id;
     }
@@ -57,6 +70,14 @@ public class DeckCardEntity {
 
     public void setDeck(DeckEntity deck) {
         this.deck = deck;
+    }
+
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
     public UUID getScryfallId() {
