@@ -15,7 +15,6 @@ import com.cartas.backend.decks.controller.dto.CreateDeckRequest;
 import com.cartas.backend.decks.controller.dto.DeckResponse;
 import com.cartas.backend.decks.controller.dto.RenameDeckRequest;
 import com.cartas.backend.decks.service.DeckService;
-import com.cartas.backend.entity.DeckEntity;
 
 import jakarta.validation.Valid;
 

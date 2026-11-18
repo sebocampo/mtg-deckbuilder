@@ -39,6 +39,8 @@ public class DeckEntity {
         cascade = CascadeType.ALL,
         orphanRemoval = true
     )
+
+    @OrderBy ("createdAt ASC")
     private List<DeckCardEntity> cards = new ArrayList<>();
 
     protected DeckEntity() {

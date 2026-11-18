@@ -2,6 +2,8 @@
 package com.cartas.backend.entity;
 
 import jakarta.persistence.*;
+
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
@@ -24,6 +26,12 @@ public class DeckCardEntity {
 
     @Column(name = "quantity", nullable = false)
     private int quantity = 1;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private OffsetDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false)
+    private OffsetDateTime updatedAt;
 
     protected DeckCardEntity() {
         // Required by JPA
