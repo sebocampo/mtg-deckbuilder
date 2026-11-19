@@ -84,6 +84,10 @@ public class DeckCardEntity {
         return scryfallId;
     }
 
+    public void setScryfallId(UUID scryfallId) {
+        this.scryfallId = scryfallId;
+    }
+
     public int getQuantity() {
         return quantity;
     }

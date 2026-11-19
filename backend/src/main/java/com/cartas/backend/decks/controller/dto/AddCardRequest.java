@@ -10,7 +10,7 @@ public class AddCardRequest {
     UUID scryfallId;
 
     @Positive
-    int quantity;
+    int quantity = 1;
 
     public UUID getScryfallId() {
         return scryfallId;

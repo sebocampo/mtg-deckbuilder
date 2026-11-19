@@ -1,7 +1,9 @@
 package com.cartas.backend.decks.service;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -81,6 +83,40 @@ public class DeckService {
         } else {
             deck.addCard(new DeckCardEntity(
                     request.getScryfallId(), oracleId, request.getQuantity()));
+        }
+        return toResponse(deck);
+    }
+
+    @Transactional
+    public DeckResponse updateCard(UUID deckId, AddCardRequest request) {
+        if (request.getQuantity() <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Quantity must be greater than zero.");
+        }
+        DeckEntity deck = findDeckById(deckId);
+        UUID oracleId = scryfallCardLookupService.resolveOracleId(request.getScryfallId());
+
+        Optional<DeckCardEntity> existing = deckCardRepository.findByDeck_IdAndOracleId(deck.getId(), oracleId);
+        if (existing.isPresent()) {
+            DeckCardEntity card = existing.get();
+            card.setScryfallId(request.getScryfallId());
+            card.setQuantity(request.getQuantity());
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Card not found in the deck.");
+        }
+        return toResponse(deck);
+    }
+
+    @Transactional
+    public DeckResponse removeCard(UUID deckId, UUID scryfallId) {
+        DeckEntity deck = findDeckById(deckId);
+        UUID oracleId = scryfallCardLookupService.resolveOracleId(scryfallId);
+
+        Optional<DeckCardEntity> existing = deckCardRepository.findByDeck_IdAndOracleId(deck.getId(), oracleId);
+        if (existing.isPresent()) {
+            DeckCardEntity card = existing.get();
+            deck.removeCard(card);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Card not found in the deck.");
         }
         return toResponse(deck);
     }
