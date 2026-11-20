@@ -1,6 +1,9 @@
 package com.cartas.backend.scryfall.service;
 
 import com.cartas.backend.scryfall.client.ScryfallClient;
+import com.cartas.backend.scryfall.dto.ScryfallLookupResult;
+import com.cartas.backend.scryfall.dto.ScryfallResponse;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -14,16 +17,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ScryfallCardLookupService {
 
     private final ScryfallClient scryfallClient;
-    private final Map<UUID, UUID> oracleIdCache = new ConcurrentHashMap<>();
+    private final Map<UUID, ScryfallLookupResult> cardCache = new ConcurrentHashMap<>();
 
     public ScryfallCardLookupService(ScryfallClient scryfallClient) {
         this.scryfallClient = scryfallClient;
     }
 
-    public UUID resolveOracleId(UUID scryfallId) {
-        return oracleIdCache.computeIfAbsent(scryfallId, id -> {
+    public ScryfallLookupResult lookupCard(UUID scryfallId) {
+        return cardCache.computeIfAbsent(scryfallId, id -> {
             try {
-                return scryfallClient.getCard(id).oracleId();
+                ScryfallResponse response = scryfallClient.getCard(id);
+                return new ScryfallLookupResult(response.oracleId(), response.typeLine());
             } catch (HttpClientErrorException.NotFound e) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown Scryfall card id: " + id);
             } catch (RestClientException e) {

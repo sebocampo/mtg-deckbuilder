@@ -18,6 +18,7 @@ import com.cartas.backend.decks.repository.DeckCardRepository;
 import com.cartas.backend.decks.repository.DeckRepository;
 import com.cartas.backend.entity.DeckCardEntity;
 import com.cartas.backend.entity.DeckEntity;
+import com.cartas.backend.scryfall.dto.ScryfallLookupResult;
 import com.cartas.backend.scryfall.service.ScryfallCardLookupService;
 
 @Service
@@ -30,11 +31,14 @@ public class DeckService {
 
     private final DeckCardRepository deckCardRepository;
 
+    private final CopyLimitPolicy copyLimitPolicy;
+
     public DeckService(DeckRepository deckRepository, ScryfallCardLookupService scryfallCardLookupService,
-            DeckCardRepository deckCardRepository) {
+            DeckCardRepository deckCardRepository, CopyLimitPolicy copyLimitPolicy) {
         this.deckRepository = deckRepository;
         this.scryfallCardLookupService = scryfallCardLookupService;
         this.deckCardRepository = deckCardRepository;
+        this.copyLimitPolicy = copyLimitPolicy;
     }
 
     // Deck Transactions
@@ -74,15 +78,18 @@ public class DeckService {
     @Transactional
     public DeckResponse addCard(UUID deckId, AddCardRequest request) {
         DeckEntity deck = findDeckById(deckId);
-        UUID oracleId = scryfallCardLookupService.resolveOracleId(request.getScryfallId());
+        ScryfallLookupResult cardInfo = scryfallCardLookupService.lookupCard(request.getScryfallId());
 
-        Optional<DeckCardEntity> existing = deckCardRepository.findByDeck_IdAndOracleId(deck.getId(), oracleId);
+        Optional<DeckCardEntity> existing = deckCardRepository.findByDeck_IdAndOracleId(deck.getId(), cardInfo.oracleId());
         if (existing.isPresent()) {
             DeckCardEntity card = existing.get();
-            card.setQuantity(card.getQuantity() + request.getQuantity());
+            int resultQuantity = card.getQuantity() + request.getQuantity();
+            copyLimitPolicy.validateCopyLimit(deck.getFormat(), cardInfo.isBasicLand(), resultQuantity);
+            card.setQuantity(resultQuantity);
         } else {
+            copyLimitPolicy.validateCopyLimit(deck.getFormat(), cardInfo.isBasicLand(), request.getQuantity());
             deck.addCard(new DeckCardEntity(
-                    request.getScryfallId(), oracleId, request.getQuantity()));
+                    request.getScryfallId(), cardInfo.oracleId(), request.getQuantity()));
         }
         return toResponse(deck);
     }
@@ -93,11 +100,12 @@ public class DeckService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Quantity must be greater than zero.");
         }
         DeckEntity deck = findDeckById(deckId);
-        UUID oracleId = scryfallCardLookupService.resolveOracleId(request.getScryfallId());
+        ScryfallLookupResult cardInfo = scryfallCardLookupService.lookupCard(request.getScryfallId());
 
-        Optional<DeckCardEntity> existing = deckCardRepository.findByDeck_IdAndOracleId(deck.getId(), oracleId);
+        Optional<DeckCardEntity> existing = deckCardRepository.findByDeck_IdAndOracleId(deck.getId(), cardInfo.oracleId());
         if (existing.isPresent()) {
             DeckCardEntity card = existing.get();
+            copyLimitPolicy.validateCopyLimit(deck.getFormat(), cardInfo.isBasicLand(), request.getQuantity());
             card.setScryfallId(request.getScryfallId());
             card.setQuantity(request.getQuantity());
         } else {
@@ -109,9 +117,9 @@ public class DeckService {
     @Transactional
     public DeckResponse removeCard(UUID deckId, UUID scryfallId) {
         DeckEntity deck = findDeckById(deckId);
-        UUID oracleId = scryfallCardLookupService.resolveOracleId(scryfallId);
+        ScryfallLookupResult cardInfo = scryfallCardLookupService.lookupCard(scryfallId);
 
-        Optional<DeckCardEntity> existing = deckCardRepository.findByDeck_IdAndOracleId(deck.getId(), oracleId);
+        Optional<DeckCardEntity> existing = deckCardRepository.findByDeck_IdAndOracleId(deck.getId(), cardInfo.oracleId());
         if (existing.isPresent()) {
             DeckCardEntity card = existing.get();
             deck.removeCard(card);
