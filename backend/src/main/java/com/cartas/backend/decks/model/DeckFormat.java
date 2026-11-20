@@ -1,6 +1,5 @@
 package com.cartas.backend.decks.model;
 
-public enum DeckFormat {
 /**
  * Format rules. Constructor arguments, in order:
  * maxCopies     – most copies of one card (counted by oracle_id) the format allows
@@ -9,7 +8,7 @@ public enum DeckFormat {
  *                 false: mainboardSize is a minimum (Standard/Pauper 60+)
  * sideboardMax  – most cards allowed in the sideboard (0 = no sideboard)
  */
-
+public enum DeckFormat {
     COMMANDER(1, 100, true, 0),
     STANDARD(4, 60, false, 15),
     PAUPER(4, 60, false, 15);
@@ -34,11 +33,11 @@ public enum DeckFormat {
         return mainboardSize;
     }
 
-    public boolean exactSize() {
+    public boolean isExactSize() {
         return exactSize;
     }
 
-    public int sideboardSize() {
+    public int sideboardMax() {
         return sideboardMax;
     }
 }
