@@ -14,6 +14,7 @@ import java.util.UUID;
 import com.cartas.backend.decks.controller.dto.CreateDeckRequest;
 import com.cartas.backend.decks.controller.dto.DeckResponse;
 import com.cartas.backend.decks.controller.dto.RenameDeckRequest;
+import com.cartas.backend.decks.controller.dto.SetCommanderRequest;
 import com.cartas.backend.decks.service.DeckService;
 
 import jakarta.validation.Valid;
@@ -22,6 +23,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 @RestController
 @RequestMapping("/api/decks")
@@ -64,5 +67,17 @@ public class DeckController {
     public ResponseEntity<Void> deleteDeck(@PathVariable UUID id) {
         deckService.deleteDeck(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("{id}/commander")
+    public ResponseEntity<DeckResponse> setCommander(
+            @PathVariable UUID id,
+            @RequestBody @Valid SetCommanderRequest request) {
+        return ResponseEntity.ok(deckService.setCommander(id, request.getCommanderScryfallId()));
+    }
+
+    @DeleteMapping("{id}/commander")
+    public ResponseEntity<DeckResponse> removeCommander(@PathVariable UUID id) {
+        return ResponseEntity.ok(deckService.removeCommander(id));
     }
 }

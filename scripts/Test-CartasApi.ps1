@@ -38,7 +38,9 @@ function Call($method, $url, $body) {
     }
 }
 
-$commander = [guid]::NewGuid()
+# Pantlaza, Sun-Favored (LCC #124) - a real legendary creature. Create-deck
+# validates the commander through Scryfall, so a made-up GUID gets a 400.
+$commander = "150a35f8-bbdc-4f6e-98e3-3bd6a3b8154a"
 $missingId = [guid]::NewGuid()
 
 Write-Host "`n--- Health ---"

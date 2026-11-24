@@ -23,8 +23,10 @@ function Post-Card($deckId, $scryfallId, $quantity) {
     }
 }
 
-# 1. Fresh Commander deck
-$deckBody = @{ name = "Add-Card Test Deck"; format = "COMMANDER" } | ConvertTo-Json
+# 1. Fresh Standard deck (the merge test below needs quantity 2, over the
+#    Commander 1-copy limit; add-card mechanics are format-independent and
+#    copy limits are proven by Test-CopyLimitsApi.ps1)
+$deckBody = @{ name = "Add-Card Test Deck"; format = "STANDARD" } | ConvertTo-Json
 $deck = Invoke-RestMethod -Method Post -Uri $base -ContentType "application/json" -Body $deckBody
 $deckId = $deck.id
 Check "deck created" ($null -ne $deckId)

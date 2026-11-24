@@ -28,6 +28,9 @@ public class DeckEntity {
     @Column(name = "commander_scryfall_id")
     private UUID commanderScryfallId;
 
+    @Column(name = "commander_oracle_id")
+    private UUID commanderOracleId;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private OffsetDateTime createdAt;
 
@@ -99,6 +102,14 @@ public class DeckEntity {
 
     public void setCommanderScryfallId(UUID commanderScryfallId) {
         this.commanderScryfallId = commanderScryfallId;
+    }
+
+    public UUID getCommanderOracleId() {
+        return commanderOracleId;
+    }
+
+    public void setCommanderOracleId(UUID commanderOracleId) {
+        this.commanderOracleId = commanderOracleId;
     }
 
     public OffsetDateTime getCreatedAt() {

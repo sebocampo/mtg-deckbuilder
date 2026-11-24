@@ -47,6 +47,11 @@ public class DeckService {
     public DeckResponse createDeck(String name, UUID commanderScryfallId, DeckFormat format) {
         DeckEntity deck = new DeckEntity(name);
         deck.setCommanderScryfallId(commanderScryfallId);
+        if (commanderScryfallId != null) {
+            ScryfallLookupResult cardInfo = scryfallCardLookupService.lookupCard(commanderScryfallId);
+            isCardValidForCommanderSpot(cardInfo);
+            deck.setCommanderOracleId(cardInfo.oracleId());
+        }
         deck.setFormat(format);
         return toResponse(deckRepository.save(deck));
     }
@@ -80,6 +85,9 @@ public class DeckService {
         DeckEntity deck = findDeckById(deckId);
         ScryfallLookupResult cardInfo = scryfallCardLookupService.lookupCard(request.getScryfallId());
 
+        if (deck.getCommanderScryfallId() != null) {
+            isAddCardCommander(deck.getCommanderOracleId(), cardInfo.oracleId());
+        }
         Optional<DeckCardEntity> existing = deckCardRepository.findByDeck_IdAndOracleId(deck.getId(), cardInfo.oracleId());
         if (existing.isPresent()) {
             DeckCardEntity card = existing.get();
@@ -129,6 +137,37 @@ public class DeckService {
         return toResponse(deck);
     }
 
+    @Transactional
+    public DeckResponse setCommander(UUID deckId, UUID commanderScryfallId) {
+        DeckEntity deck = findDeckById(deckId);
+        ScryfallLookupResult cardInfo = scryfallCardLookupService.lookupCard(commanderScryfallId);
+
+        Optional<DeckCardEntity> existing = deckCardRepository.findByDeck_IdAndOracleId(deck.getId(), cardInfo.oracleId());
+        if (existing.isPresent()) {
+            // Possibly have logic to eventually move card from in the deck to the commander slot, but for now just throw an error.
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Commander cannot be a card already in the deck.");
+        }
+
+        isCardValidForCommanderSpot(cardInfo);
+
+        deck.setCommanderScryfallId(commanderScryfallId);
+        deck.setCommanderOracleId(cardInfo.oracleId());
+        return toResponse(deck);
+    }
+
+    @Transactional
+    public DeckResponse removeCommander(UUID deckId) {
+        DeckEntity deck = findDeckById(deckId);
+
+        if (deck.getCommanderScryfallId() != null) {
+            deck.setCommanderScryfallId(null);
+            deck.setCommanderOracleId(null);
+        }
+
+        return toResponse(deck);
+    }
+
+
     // Private Helper Methods
 
     private DeckEntity findDeckById(UUID deckId) {
@@ -157,5 +196,17 @@ public class DeckService {
                 card.getQuantity(),
                 card.getCreatedAt(),
                 card.getUpdatedAt());
+    }
+
+    private static void isAddCardCommander(UUID currentCommanderOracleId, UUID oracleId) {
+        if (currentCommanderOracleId.equals(oracleId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Card is already set as the commander of this deck.");
+        }
+    }
+
+    private static void isCardValidForCommanderSpot(ScryfallLookupResult cardInfo) {
+        if (!cardInfo.isLegendary() || !cardInfo.isCreature()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Commander must be a legendary creature.");
+        }
     }
 }

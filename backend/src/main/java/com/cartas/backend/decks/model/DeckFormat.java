@@ -18,11 +18,11 @@ public enum DeckFormat {
     private final boolean exactSize;
     private final int sideboardMax;
 
-    DeckFormat(int maxCopies, int mainboardSize, boolean exactSize, int sideboardSize) {
+    DeckFormat(int maxCopies, int mainboardSize, boolean exactSize, int sideboardMax) {
         this.maxCopies = maxCopies;
         this.mainboardSize = mainboardSize;
         this.exactSize = exactSize;
-        this.sideboardMax = sideboardSize;
+        this.sideboardMax = sideboardMax;
     }
 
     public int maxCopies() {

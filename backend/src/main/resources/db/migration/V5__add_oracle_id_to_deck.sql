@@ -1,0 +1,1 @@
+ALTER TABLE decks ADD COLUMN commander_oracle_id UUID;

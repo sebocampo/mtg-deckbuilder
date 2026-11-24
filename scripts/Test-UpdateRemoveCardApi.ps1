@@ -40,8 +40,11 @@ function Remove-Card($deckId, $scryfallId) {
     }
 }
 
-# 1. Setup: fresh Commander deck, add printing A with quantity 3
-$deckBody = @{ name = "Update-Remove Test Deck"; format = "COMMANDER" } | ConvertTo-Json
+# 1. Setup: fresh Standard deck, add printing A with quantity 3.
+#    Standard (4-copy limit) because this suite exercises PATCH/DELETE mechanics
+#    with quantities up to 3 — over the Commander 1-copy limit. Format rules
+#    themselves are proven by Test-CopyLimitsApi.ps1.
+$deckBody = @{ name = "Update-Remove Test Deck"; format = "STANDARD" } | ConvertTo-Json
 $deck = Invoke-RestMethod -Method Post -Uri $base -ContentType "application/json" -Body $deckBody
 $deckId = $deck.id
 Check "deck created" ($null -ne $deckId)
