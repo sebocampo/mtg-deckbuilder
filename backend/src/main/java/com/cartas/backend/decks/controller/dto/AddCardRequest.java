@@ -7,10 +7,10 @@ import jakarta.validation.constraints.Positive;
 
 public class AddCardRequest {
     @NotNull
-    UUID scryfallId;
+    private UUID scryfallId;
 
     @Positive
-    int quantity = 1;
+    private int quantity = 1;
 
     public UUID getScryfallId() {
         return scryfallId;
