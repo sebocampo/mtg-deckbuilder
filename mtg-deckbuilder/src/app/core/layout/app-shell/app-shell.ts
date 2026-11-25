@@ -19,7 +19,7 @@ import { DeckStore } from '../../../features/decks/data-access/deck.store';
   styleUrl: './app-shell.scss'
 })
 export class AppShell {
-  readonly deckStore = inject(DeckStore);
+  private readonly deckStore = inject(DeckStore);
   ngOnInit() {
     this.deckStore.loadDecks();
   }

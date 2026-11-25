@@ -6,8 +6,8 @@ import { Observable } from "rxjs";
 
 @Injectable({ providedIn: 'root' })
 export class DeckService {
-    http = inject(HttpClient)
-    baseUrl = 'http://localhost:8081/api/decks'
+    private readonly http = inject(HttpClient)
+    private readonly baseUrl = 'http://localhost:8081/api/decks'
 
     getDecks(): Observable<Deck[]> {
         return this.http.get<Deck[]>(this.baseUrl);

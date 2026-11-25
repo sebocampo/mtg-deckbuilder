@@ -37,27 +37,27 @@ export class CardSearch {
   private readonly router = inject(Router);
   private readonly deckStore = inject(DeckStore);
 
-  readonly error = this.deckStore.error;
+  protected readonly error = this.deckStore.error;
 
   // Null means we're in the general /search page.
-  readonly deckId = this.route.snapshot.paramMap.get('id');
+  protected readonly deckId = this.route.snapshot.paramMap.get('id');
 
   // True when the user is adding cards to a deck.
-  readonly isDeckMode = this.deckId !== null;
+  protected readonly isDeckMode = this.deckId !== null;
 
-  readonly currentDeck = this.deckId
+  protected readonly currentDeck = this.deckId
     ? this.deckStore.getDeckById(this.deckId)
     : undefined;
 
-  readonly addedMessage = signal('');
+  protected readonly addedMessage = signal('');
 
-  readonly searchControl = new FormControl('', {
+  protected readonly searchControl = new FormControl('', {
     nonNullable: true
   });
 
-  readonly selectedCard = signal<MtgCard | null>(null);
+  protected readonly selectedCard = signal<MtgCard | null>(null);
 
-  readonly results$ = this.searchControl.valueChanges.pipe(
+  protected readonly results$ = this.searchControl.valueChanges.pipe(
     startWith(this.searchControl.value),
     map(value => value.trim()),
     debounceTime(350),

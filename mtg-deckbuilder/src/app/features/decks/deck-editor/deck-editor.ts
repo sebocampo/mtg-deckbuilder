@@ -26,6 +26,8 @@ export class DeckEditor {
   );
   protected readonly isCommanderDeck = computed(() => this.deck()?.format === DeckFormat.Commander);
 
+  protected readonly deckId = this.route.snapshot.paramMap.get('id');
+
   // Convert our reactive deck signal into an Observable.
   private readonly deck$ = toObservable(this.deck);
 
@@ -55,8 +57,6 @@ export class DeckEditor {
       );
     })
   );
-
-  readonly deckId = this.route.snapshot.paramMap.get('id');
 
   removeCard(scryfallId: string): void {
     if (!this.deckId) return;
