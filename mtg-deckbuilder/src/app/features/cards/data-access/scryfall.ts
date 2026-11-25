@@ -32,4 +32,8 @@ export class ScryfallService {
             `${this.baseUrl}/cards/${encodeURIComponent(id)}`
         );
     }
+
+    getPrintings(card: MtgCard): Observable<ScryfallSearchResponse> {
+        return this.http.get<ScryfallSearchResponse>(card.prints_search_uri!);
+    }
 }

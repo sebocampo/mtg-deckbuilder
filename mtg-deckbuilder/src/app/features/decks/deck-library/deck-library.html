@@ -11,13 +11,16 @@
         </a>
     </section>
     <section class="decks-grid">
+        @if(error()) {
+            <p class="error">{{ error() }}</p>
+        }
         @for (deck of decks(); track deck.id) {
         <a class="deck-card deck-link" [routerLink]="['/decks', deck.id]">
             <div class="deck-info">
                 <h2>{{ deck.name }}</h2>
                 <p>{{ deck.cards.length }} cards</p>
                 <p>
-                    {{ deck.commander ? 'Commander selected' : 'No commander yet' }}
+                    {{ deck.commanderScryfallId ? 'Commander selected' : 'No commander yet' }}
                 </p>
             </div>
         </a>

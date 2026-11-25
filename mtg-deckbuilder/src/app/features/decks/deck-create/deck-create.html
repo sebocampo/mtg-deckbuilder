@@ -7,7 +7,7 @@
   <div class="create-panel">
     <p class="eyebrow">NEW COMMANDER DECK</p>
 
-    <form (ngSubmit)="createDeck()">
+    <form (ngSubmit)="createDeck(deckName(), deckFormat(), commanderId())">
       <label for="deck-name">Deck Name</label>
 
       <input

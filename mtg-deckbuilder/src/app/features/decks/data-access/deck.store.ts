@@ -1,124 +1,137 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { Deck, DeckCard } from '../models/deck.model';
+import { DeckService } from './deck.service';
+import { DeckFormat } from '../models/deck.format';
 
 @Injectable({
     providedIn: 'root'
 })
 export class DeckStore {
 
+    private readonly deckService = inject(DeckService);
     private readonly _decks = signal<Deck[]>([]);
-
     readonly decks = this._decks.asReadonly();
-
     readonly deckCount = computed(() => this._decks().length);
 
-    createDeck(name: string): Deck {
-        const now = new Date().toISOString();
+    private readonly _error = signal<string | null>(null);
+    readonly error = this._error.asReadonly();
 
-        const newDeck: Deck = {
-            id: crypto.randomUUID(),
-            name: name.trim(),
-            commander: null,
-            cards: [],
-            createdAt: now,
-            updatedAt: now
-        };
-
-        this._decks.update(decks => [...decks, newDeck]);
-
-        return newDeck;
+    loadDecks(): void {
+        this.deckService.getDecks().subscribe({
+            next: decks => {
+                this._decks.set(decks);
+                this._error.set(null);
+            },
+            error: err => {
+                this._error.set(err.error?.detail ?? 'Error retrieving decks');
+            }
+        })
     }
 
-    getDeck(id: string): Deck | undefined {
+    getDeckById(id: string): Deck | undefined {
         return this._decks().find(deck => deck.id === id);
     }
 
-    renameDeck(id: string, name: string): void {
-        const updatedName = name.trim();
+    createDeck(name: string, format: DeckFormat, commanderId: string): void {
+        this.deckService.createDeck(name, format, commanderId).subscribe({
+            next: deck => {
+                this._decks.update(decks => [...decks, deck]);
+                this._error.set(null);
+            },
+            error: err => {
+                this._error.set(err.error?.detail ?? 'Error creating deck');
+            }
+        });
+    }
 
-        if (!updatedName) return;
+    renameDeck(id: string, newName: string): void {
+        const updatedName = newName.trim();
+        if (!updatedName) {
+            this._error.set('Deck name cannot be empty');
+            return;
+        }
 
-        this._decks.update(decks =>
-            decks.map(deck =>
-                deck.id === id
-                    ? {
-                        ...deck,
-                        name: updatedName,
-                        updatedAt: new Date().toISOString()
-                    }
-                    : deck
-            )
-        );
+        this.deckService.renameDeck(id, updatedName).subscribe({
+            next: updatedDeck => {
+                this._decks.update(decks => decks.map(deck => deck.id === id ? updatedDeck : deck));
+                this._error.set(null);
+            },
+            error: err => {
+                this._error.set(err.error?.detail ?? 'Error renaming deck');
+            }
+        });
     }
 
     deleteDeck(id: string): void {
-        this._decks.update(decks =>
-            decks.filter(deck => deck.id !== id)
-        );
+        this.deckService.deleteDeck(id).subscribe({
+            next: () => {
+                this._decks.update(decks => decks.filter(deck => deck.id !== id));
+                this._error.set(null);
+            },
+            error: err => {
+                this._error.set(err.error?.detail ?? 'Error deleting deck');
+            }
+        });
     }
 
-    addCard(deckId: string, card: DeckCard): void {
-        if (card.quantity <= 0) return;
+    setCommander(deckId: string, commanderScryfallId: string): void {
+        this.deckService.setCommander(deckId, commanderScryfallId).subscribe({
+            next: updatedDeck => {
+                this._decks.update(decks => decks.map(deck => deck.id === deckId ? updatedDeck : deck));
+                this._error.set(null);
+            },
+            error: err => {
+                this._error.set(err.error?.detail ?? 'Error setting commander');
+            }
+        });
+    }
 
-        this._decks.update(decks =>
-            decks.map(deck => {
-                if (deck.id !== deckId) return deck;
+    removeCommander(deckId: string): void {
+        this.deckService.removeCommander(deckId).subscribe({
+            next: updatedDeck => {
+                this._decks.update(decks => decks.map(deck => deck.id === deckId ? updatedDeck : deck));
+                this._error.set(null);
+            },
+            error: err => {
+                this._error.set(err.error?.detail ?? 'Error removing commander');
+            }
+        });
+    }
 
-                const existing = deck.cards.find(
-                    c => c.scryfallId === card.scryfallId
-                );
+    addCardToDeck(deckId: string, card: DeckCard): void {
+        this.deckService.addCardToDeck(deckId, card.scryfallId, card.quantity).subscribe({
+            next: updatedDeck => {
+                this._decks.update(decks => decks.map(deck => deck.id === deckId ? updatedDeck : deck));
+                this._error.set(null);
+            },
+            error: err => {
+                this._error.set(err.error?.detail ?? 'Error adding card to deck');
+            }
+        });
+    }
 
-                const cards = existing
-                    ? deck.cards.map(c =>
-                        c.scryfallId === card.scryfallId
-                            ? { ...c, quantity: c.quantity + card.quantity }
-                            : c
-                    )
-                    : [...deck.cards, card];
-
-                return {
-                    ...deck,
-                    cards,
-                    updatedAt: new Date().toISOString()
-                };
-            })
-        );
+    updateCardQuantity(deckId: string, card: DeckCard): void {
+        this.deckService.updateCardQuantity(deckId, card.scryfallId, card.quantity).subscribe({
+            next: updatedDeck => {
+                this._decks.update(decks => decks.map(deck => deck.id === deckId ? updatedDeck : deck));
+                this._error.set(null);
+            },
+            error: err => {
+                this._error.set(err.error?.detail ?? 'Error updating card quantity');
+            }
+        });
     }
 
     removeCard(deckId: string, scryfallId: string): void {
-        this._decks.update(decks =>
-            decks.map(deck => {
-                if (deck.id !== deckId) return deck;
-
-                const cards = deck.cards
-                    .map(card =>
-                        card.scryfallId === scryfallId
-                            ? { ...card, quantity: card.quantity - 1 }
-                            : card
-                    )
-                    .filter(card => card.quantity > 0);
-
-                return {
-                    ...deck,
-                    cards,
-                    updatedAt: new Date().toISOString()
-                };
-            })
-        );
-    }
-
-    setCommander(deckId: string, commander: DeckCard | null): void {
-        this._decks.update(decks =>
-            decks.map(deck =>
-                deck.id === deckId
-                    ? {
-                        ...deck,
-                        commander,
-                        updatedAt: new Date().toISOString()
-                    }
-                    : deck
-            )
-        );
+        this.deckService.removeCardFromDeck(deckId, scryfallId).subscribe({
+            next: updatedDeck => {
+                this._decks.update(decks => decks.map(deck => deck.id === deckId ? updatedDeck : deck));
+                this._error.set(null);
+            },
+            error: err => {
+                this._error.set(err.error?.detail ?? 'Error removing card from deck');
+            }
+        });
     }
 
 }

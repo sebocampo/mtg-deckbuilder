@@ -3,6 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DeckStore } from '../data-access/deck.store';
+import { DeckFormat } from '../models/deck.format';
 
 @Component({
   selector: 'app-deck-create',
@@ -16,14 +17,16 @@ export class DeckCreate {
   private readonly router = inject(Router);
 
   readonly deckName = signal('');
+  // defaults for now.
+  readonly deckFormat = signal(DeckFormat.Commander);
+  readonly commanderId = signal('');
 
-  createDeck(): void {
-    const name = this.deckName().trim();
-
-    if (!name) return;
-
-    const deck = this.deckStore.createDeck(name);
-
-    this.router.navigate(['/decks', deck.id]);
+  createDeck(name: string, format: DeckFormat, commanderId: string): void {
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+      return;
+    }
+    this.deckStore.createDeck(trimmedName, format, commanderId);
+    this.router.navigate(['/decks']);
   }
 }

@@ -44,7 +44,7 @@ export class CardSearch {
   readonly isDeckMode = this.deckId !== null;
 
   readonly currentDeck = this.deckId
-    ? this.deckStore.getDeck(this.deckId)
+    ? this.deckStore.getDeckById(this.deckId)
     : undefined;
 
   readonly addedMessage = signal('');
@@ -114,12 +114,13 @@ export class CardSearch {
   addCardToDeck(card: MtgCard): void {
     const deckId = this.deckId;
 
-    if (!deckId || !this.deckStore.getDeck(deckId)) {
+    if (!deckId || !this.deckStore.getDeckById(deckId)) {
       return;
     }
 
-    this.deckStore.addCard(deckId, {
+    this.deckStore.addCardToDeck(deckId, {
       scryfallId: card.id,
+      oracleId: card.oracle_id,
       quantity: 1
     });
 

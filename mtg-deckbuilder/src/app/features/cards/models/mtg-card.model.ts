@@ -1,8 +1,15 @@
 
 export interface MtgCard {
     id: string;
-    oracle_id?: string;
+    oracle_id: string;
+    prints_search_uri?: string;
     name: string;
+    set_name: string;
+    set: string;
+    collector_number: string;
+    released_at: string;
+    illustration_id?: string;
+    finishes?: string[];
     mana_cost?: string;
     cmc: number;
     type_line: string;

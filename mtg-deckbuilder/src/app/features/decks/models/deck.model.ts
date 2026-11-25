@@ -1,7 +1,10 @@
+import { DeckFormat } from "./deck.format";
+
 export interface Deck {
   id: string;
   name: string;
-  commander: DeckCard | null;
+  commanderScryfallId: string | null;
+  format: DeckFormat;
   cards: DeckCard[];
   createdAt: string;
   updatedAt: string;
@@ -9,5 +12,6 @@ export interface Deck {
 
 export interface DeckCard {
   scryfallId: string;
+  oracleId: string;
   quantity: number;
 }

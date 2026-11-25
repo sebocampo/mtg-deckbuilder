@@ -20,7 +20,7 @@ export class DeckEditor {
   private readonly deckStore = inject(DeckStore);
   private readonly cardCache = inject(CardCacheService);
   readonly deck = computed(() =>
-    this.deckStore.decks().find(d => d.id === this.deckId)
+    this.deckStore.getDeckById(this.route.snapshot.paramMap.get('id')!)
   );
 
   // Convert our reactive deck signal into an Observable.
@@ -33,7 +33,7 @@ export class DeckEditor {
       }
 
       return forkJoin(
-        deck.cards.map(entry =>
+        deck.cards.map((entry: { scryfallId: string; quantity: any; }) =>
           this.cardCache.getCard(entry.scryfallId).pipe(
             map(card => ({
               ...card,

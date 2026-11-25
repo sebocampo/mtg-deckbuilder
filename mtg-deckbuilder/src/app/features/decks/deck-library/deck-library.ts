@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DeckStore } from '../data-access/deck.store';
 
@@ -20,4 +20,10 @@ interface DeckPreview {
 export class DeckLibrary {
   readonly deckStore = inject(DeckStore);
   readonly decks = this.deckStore.decks;
+  readonly error = this.deckStore.error;
+
+  ngOnInit() {
+    this.deckStore.loadDecks();
+  }
+
 }
