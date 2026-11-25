@@ -20,16 +20,16 @@ export class DeckEditor {
   private readonly route = inject(ActivatedRoute);
   private readonly deckStore = inject(DeckStore);
   private readonly cardCache = inject(CardCacheService);
-  readonly deckCardCount = deckCardCount;
-  readonly deck = computed(() =>
+  protected readonly deckCardCount = deckCardCount;
+  protected readonly deck = computed(() =>
     this.deckStore.getDeckById(this.route.snapshot.paramMap.get('id')!)
   );
-  readonly isCommanderDeck = computed(() => this.deck()?.format === DeckFormat.Commander);
+  protected readonly isCommanderDeck = computed(() => this.deck()?.format === DeckFormat.Commander);
 
   // Convert our reactive deck signal into an Observable.
   private readonly deck$ = toObservable(this.deck);
 
-  readonly cards$ = this.deck$.pipe(
+  protected readonly cards$ = this.deck$.pipe(
     switchMap(deck => {
       if (!deck || deck.cards.length === 0) {
         return of([]);

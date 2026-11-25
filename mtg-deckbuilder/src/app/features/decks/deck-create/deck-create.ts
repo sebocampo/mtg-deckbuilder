@@ -16,13 +16,11 @@ export class DeckCreate {
   private readonly deckStore = inject(DeckStore);
   private readonly router = inject(Router);
 
-  readonly deckName = signal('');
+  protected readonly deckName = signal('');
   // defaults for now.
-  readonly deckFormat = signal(DeckFormat.Commander);
-  readonly scryfallCommanderId = signal<string | null>(null)
-  readonly error = this.deckStore.error;
+  protected readonly error = this.deckStore.error;
 
-  readonly formats = Object.values(DeckFormat);
+  protected readonly formats = Object.values(DeckFormat);
 
   createDeck(name: string, format: DeckFormat, commanderScryfallId: string | null): void {
     const trimmedName = name.trim();

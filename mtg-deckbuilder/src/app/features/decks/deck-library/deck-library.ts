@@ -1,16 +1,7 @@
-import { Component, inject, Signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DeckStore } from '../data-access/deck.store';
 import { Deck, deckCardCount } from '../models/deck.model';
-
-interface DeckPreview {
-  id: number;
-  name: string;
-  commander: string;
-  colors: string[];
-  cardCount: number;
-  image: string;
-}
 @Component({
   selector: 'app-deck-library',
   standalone: true,
@@ -19,10 +10,10 @@ interface DeckPreview {
   styleUrl: './deck-library.scss',
 })
 export class DeckLibrary {
-  readonly deckStore = inject(DeckStore);
-  readonly decks = this.deckStore.decks;
-  readonly error = this.deckStore.error;
-  readonly deckCardCounter = deckCardCount;
+  protected readonly deckStore = inject(DeckStore);
+  protected readonly decks = this.deckStore.decks;
+  protected readonly error = this.deckStore.error;
+  protected readonly deckCardCount = deckCardCount;
 
   ngOnInit() {
     this.deckStore.clearError();

@@ -46,10 +46,11 @@ public class DeckService {
     @Transactional
     public DeckResponse createDeck(String name, UUID commanderScryfallId, DeckFormat format) {
         String trimmedName = name.trim();
-        DeckEntity deck = new DeckEntity(trimmedName);
         if (deckRepository.existsByNameIgnoreCase(trimmedName)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A deck named '" + trimmedName + "' already exists.");
         }
+        
+        DeckEntity deck = new DeckEntity(trimmedName);
         deck.setCommanderScryfallId(commanderScryfallId);
         if (commanderScryfallId != null) {
             ScryfallLookupResult cardInfo = scryfallCardLookupService.lookupCard(commanderScryfallId);
@@ -72,11 +73,11 @@ public class DeckService {
 
     @Transactional
     public DeckResponse renameDeck(UUID deckId, String newName) {
-        DeckEntity deck = findDeckById(deckId);
         String trimmedName = newName.trim();
         if (deckRepository.existsByNameIgnoreCaseAndIdNot(trimmedName, deckId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A deck named '" + trimmedName + "' already exists.");
         }
+        DeckEntity deck = findDeckById(deckId);
         deck.setName(trimmedName);
         return toResponse(deck);
     }
