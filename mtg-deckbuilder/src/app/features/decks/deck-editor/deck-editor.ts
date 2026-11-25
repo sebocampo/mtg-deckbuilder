@@ -7,6 +7,8 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { forkJoin, of, switchMap, catchError, map } from 'rxjs';
 import { MtgCard } from '../../cards/models/mtg-card.model';
 import { AsyncPipe } from '@angular/common';
+import { deckCardCount } from '../models/deck.model';
+import { DeckFormat } from '../models/deck.format';
 @Component({
   selector: 'app-deck-editor',
   standalone: true,
@@ -18,9 +20,11 @@ export class DeckEditor {
   private readonly route = inject(ActivatedRoute);
   private readonly deckStore = inject(DeckStore);
   private readonly cardCache = inject(CardCacheService);
+  readonly deckCardCount = deckCardCount;
   readonly deck = computed(() =>
     this.deckStore.getDeckById(this.route.snapshot.paramMap.get('id')!)
   );
+  readonly isCommanderDeck = computed(() => this.deck()?.format === DeckFormat.Commander);
 
   // Convert our reactive deck signal into an Observable.
   private readonly deck$ = toObservable(this.deck);

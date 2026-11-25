@@ -7,5 +7,9 @@ import com.cartas.backend.entity.DeckEntity;
 import java.util.UUID;
 
 public interface DeckRepository
-        extends JpaRepository<DeckEntity, UUID> {
+                extends JpaRepository<DeckEntity, UUID> {
+
+        boolean existsByNameIgnoreCase(String name);
+
+        boolean existsByNameIgnoreCaseAndIdNot(String name, UUID deckId);
 }
