@@ -3,7 +3,6 @@ import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DeckStore } from '../data-access/deck.store';
 import { CardCacheService } from '../../cards/data-access/card-cache';
-import { take } from 'rxjs';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { forkJoin, of, switchMap, catchError, map } from 'rxjs';
 import { MtgCard } from '../../cards/models/mtg-card.model';

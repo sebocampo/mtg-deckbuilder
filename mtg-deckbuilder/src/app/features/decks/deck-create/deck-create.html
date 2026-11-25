@@ -1,32 +1,31 @@
-
 <main class="create-page">
   <a routerLink="/decks" class="back-link">
     ← Back to Decks
   </a>
 
   <div class="create-panel">
-    <p class="eyebrow">NEW COMMANDER DECK</p>
+    <p class="eyebrow">NEW DECK</p>
 
-    <form (ngSubmit)="createDeck(deckName(), deckFormat(), commanderId())">
+    <form (ngSubmit)="createDeck(deckName(), deckFormat(), scryfallCommanderId())">
       <label for="deck-name">Deck Name</label>
 
-      <input
-        id="deck-name"
-        type="text"
-        name="deckName"
-        [ngModel]="deckName()"
-        (ngModelChange)="deckName.set($event)"
-        placeholder="e.g. Goblin Mayhem"
-        maxlength="60"
-        required
-      />
+      <label for="deck-format">Format</label>
+      <select id="deck-format" name="deckFormat" [ngModel]="deckFormat()" (ngModelChange)="deckFormat.set($event)">
+        @for (format of formats; track format) {
+        <option [value]="format">{{ format }}</option>
+        }
+      </select>
 
-      <button
-        type="submit"
-        class="create-button"
-        [disabled]="!deckName().trim()">
+      <input id="deck-name" type="text" name="deckName" [ngModel]="deckName()" (ngModelChange)="deckName.set($event)"
+        placeholder="e.g. Goblin Mayhem" maxlength="60" required />
+
+      <button type="submit" class="create-button" [disabled]="!deckName().trim()">
         Create Deck
       </button>
     </form>
+
+    @if (error()) {
+    <p class="error">{{ error() }}</p>
+    }
   </div>
 </main>

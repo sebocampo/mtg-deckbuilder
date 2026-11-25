@@ -19,14 +19,18 @@ export class DeckCreate {
   readonly deckName = signal('');
   // defaults for now.
   readonly deckFormat = signal(DeckFormat.Commander);
-  readonly commanderId = signal('');
+  readonly scryfallCommanderId = signal<string | null>(null)
+  readonly error = this.deckStore.error;
 
-  createDeck(name: string, format: DeckFormat, commanderId: string): void {
+  readonly formats = Object.values(DeckFormat);
+
+  createDeck(name: string, format: DeckFormat, commanderScryfallId: string | null): void {
     const trimmedName = name.trim();
     if (!trimmedName) {
       return;
     }
-    this.deckStore.createDeck(trimmedName, format, commanderId);
-    this.router.navigate(['/decks']);
+    this.deckStore.createDeck(trimmedName, format, commanderScryfallId, created => {
+      this.router.navigate(['/decks', created.id]);
+    });
   }
 }

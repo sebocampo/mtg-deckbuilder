@@ -37,6 +37,8 @@ export class CardSearch {
   private readonly router = inject(Router);
   private readonly deckStore = inject(DeckStore);
 
+  readonly error = this.deckStore.error;
+
   // Null means we're in the general /search page.
   readonly deckId = this.route.snapshot.paramMap.get('id');
 
@@ -101,6 +103,7 @@ export class CardSearch {
   openPreview(card: MtgCard): void {
     this.addedMessage.set('');
     this.selectedCard.set(card);
+    this.deckStore.clearError();
   }
 
   closePreview(): void {
@@ -108,30 +111,25 @@ export class CardSearch {
     this.addedMessage.set('');
   }
 
-
-
-
   addCardToDeck(card: MtgCard): void {
     const deckId = this.deckId;
 
     if (!deckId || !this.deckStore.getDeckById(deckId)) {
       return;
     }
-
     this.deckStore.addCardToDeck(deckId, {
       scryfallId: card.id,
       oracleId: card.oracle_id,
       quantity: 1
+    }, () => {
+      // Close the preview.
+      this.selectedCard.set(null);
+
+      // Keep the search results visible.
+      this.addedMessage.set(`${card.name} added to deck!`);
     });
 
-    // Close the preview.
-    this.selectedCard.set(null);
-
-    // Keep the search results visible.
-    this.addedMessage.set(`${card.name} added to deck!`);
   }
-
-
 
   backToDeck(): void {
     if (!this.deckId) return;

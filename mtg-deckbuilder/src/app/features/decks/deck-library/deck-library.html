@@ -18,7 +18,8 @@
         <a class="deck-card deck-link" [routerLink]="['/decks', deck.id]">
             <div class="deck-info">
                 <h2>{{ deck.name }}</h2>
-                <p>{{ deck.cards.length }} cards</p>
+                <h4>{{ deck.format }}</h4>
+                <p>{{ cardCount(deck) }} cards</p>
                 <p>
                     {{ deck.commanderScryfallId ? 'Commander selected' : 'No commander yet' }}
                 </p>
@@ -26,7 +27,7 @@
         </a>
         } @empty {
         <p class="subtitle">
-            No decks yet. Create your first Commander deck!
+            No decks yet. Create your first deck!
         </p>
         }
     </section>

@@ -97,6 +97,10 @@
       <p>Mana Cost: {{ card.mana_cost || 'N/A' }}</p>
       <p>Mana Value: {{ card.cmc }}</p>
 
+      @if(error()) {
+      <p class="error">{{ error() }}</p>
+      }
+
       @if (isDeckMode && currentDeck) {
       <div class="deck-actions">
         <button type="button" class="add-button" (click)="addCardToDeck(card)">

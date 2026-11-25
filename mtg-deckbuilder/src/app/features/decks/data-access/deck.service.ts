@@ -1,8 +1,8 @@
-import { HttpClient, HttpParams } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import { Observable } from "rxjs/internal/Observable";
 import { Deck } from "../models/deck.model";
 import { DeckFormat } from "../models/deck.format";
+import { Observable } from "rxjs";
 
 @Injectable({ providedIn: 'root' })
 export class DeckService {
@@ -17,8 +17,14 @@ export class DeckService {
         return this.http.get<Deck>(`${this.baseUrl}/${id}`);
     }
 
-    createDeck(name: string, format: DeckFormat, commanderId?: string): Observable<Deck> {
-        return this.http.post<Deck>(this.baseUrl, { name, format, commanderId });
+    createDeck(name: string, format: DeckFormat, commanderScryfallId: string | null): Observable<Deck> {
+        const body: { name: string; format: DeckFormat; commanderScryfallId?: string } = { name, format };
+
+        if (commanderScryfallId) {
+            body.commanderScryfallId = commanderScryfallId;
+        }
+
+        return this.http.post<Deck>(this.baseUrl, body);
     }
 
     renameDeck(id: string, newName: string): Observable<Deck> {

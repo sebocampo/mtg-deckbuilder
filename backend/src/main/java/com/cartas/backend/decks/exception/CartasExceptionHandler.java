@@ -6,6 +6,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 public class CartasExceptionHandler {
@@ -21,5 +22,10 @@ public class CartasExceptionHandler {
             detail.append(error.getField()).append(": ").append(error.getDefaultMessage()).append("; ");
         }
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, detail.toString());
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    ProblemDetail handleResponseStatusException(ResponseStatusException ex) {
+        return ProblemDetail.forStatusAndDetail(ex.getStatusCode(), ex.getReason());
     }
 }

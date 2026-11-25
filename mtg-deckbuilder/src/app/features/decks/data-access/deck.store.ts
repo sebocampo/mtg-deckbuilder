@@ -32,11 +32,12 @@ export class DeckStore {
         return this._decks().find(deck => deck.id === id);
     }
 
-    createDeck(name: string, format: DeckFormat, commanderId: string): void {
-        this.deckService.createDeck(name, format, commanderId).subscribe({
+    createDeck(name: string, format: DeckFormat, commanderScryfallId: string | null, onSuccess?: (deck: Deck) => void): void {
+        this.deckService.createDeck(name, format, commanderScryfallId).subscribe({
             next: deck => {
                 this._decks.update(decks => [...decks, deck]);
                 this._error.set(null);
+                onSuccess?.(deck);
             },
             error: err => {
                 this._error.set(err.error?.detail ?? 'Error creating deck');
@@ -98,11 +99,12 @@ export class DeckStore {
         });
     }
 
-    addCardToDeck(deckId: string, card: DeckCard): void {
+    addCardToDeck(deckId: string, card: DeckCard, onSuccess?: () => void): void {
         this.deckService.addCardToDeck(deckId, card.scryfallId, card.quantity).subscribe({
             next: updatedDeck => {
                 this._decks.update(decks => decks.map(deck => deck.id === deckId ? updatedDeck : deck));
                 this._error.set(null);
+                onSuccess?.();
             },
             error: err => {
                 this._error.set(err.error?.detail ?? 'Error adding card to deck');
@@ -134,4 +136,7 @@ export class DeckStore {
         });
     }
 
+    clearError(): void {
+        this._error.set(null);
+    }
 }
