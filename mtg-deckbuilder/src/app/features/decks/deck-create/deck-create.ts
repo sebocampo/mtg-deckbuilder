@@ -16,8 +16,8 @@ export class DeckCreate {
   private readonly deckStore = inject(DeckStore);
   private readonly router = inject(Router);
 
-  readonly deckFormat = signal(DeckFormat);
-  readonly scryfallCommanderId = signal<string | null>(null)
+  protected readonly deckFormat = signal(DeckFormat.Commander);
+  protected readonly scryfallCommanderId = signal<string | null>(null)
   protected readonly deckName = signal('');
   // defaults for now.
   protected readonly error = this.deckStore.error;
