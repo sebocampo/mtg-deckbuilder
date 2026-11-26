@@ -4,16 +4,20 @@
   </a>
 
   @if (deck(); as currentDeck) {
-  @if(editing()) {"
-  <input id="deck-name" type="text" name="newDeckName" [ngModel]="deckName()" (ngModelChange)="deckName.set($event)"
-    maxlength="60" required />
-  <button type="button" class="btn btn-primary" (click)="renameDeck(deckName())">Save</button>
-  <button type="button" class="btn btn-ghost" (click)="toggleEdit(false)">Cancel</button>
-  } @else {
-  <h1>{{ currentDeck.name }}</h1>
-  <button type="button" class="btn btn-ghost" (click)="toggleEdit(true)"> Rename </button>
-  }
-
+  <div class="deck-title">
+    @if(editing()) {
+    <input id="deck-name" type="text" class="deck-name-input" name="newDeckName" [ngModel]="deckName()"
+      (ngModelChange)="deckName.set($event)" [placeholder]="currentDeck.name" maxlength="60" required />
+    <button type="button" class="btn btn-primary" (click)="renameDeck(deckName())">Save</button>
+    <button type="button" class="btn btn-ghost" (click)="toggleEdit(false)">Cancel</button>
+    @if (error()) {
+    <p class="error">{{ error() }}</p>
+    }
+    } @else {
+    <h1>{{ currentDeck.name }}</h1>
+    <button type="button" class="btn btn-ghost" (click)="toggleEdit(true)"> Rename </button>
+    }
+  </div>
   <p>
     {{ currentDeckCardCount(currentDeck) }} cards
   </p>

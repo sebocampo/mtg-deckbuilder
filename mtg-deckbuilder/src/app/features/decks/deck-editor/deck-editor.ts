@@ -1,6 +1,6 @@
 
 import { Component, computed, inject, input, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { DeckStore } from '../data-access/deck.store';
 import { CardCacheService } from '../../cards/data-access/card-cache';
 import { toObservable } from '@angular/core/rxjs-interop';
@@ -18,7 +18,6 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './deck-editor.scss',
 })
 export class DeckEditor {
-  private readonly route = inject(ActivatedRoute);
   private readonly deckStore = inject(DeckStore);
   private readonly cardCache = inject(CardCacheService);
 
@@ -34,13 +33,20 @@ export class DeckEditor {
 
   protected editing = signal(false);
 
-  private readonly deckName = signal('');
+  protected readonly deckName = signal('');
+
+  protected readonly error = this.deckStore.error;
 
   ngOnInit() {
+    this.deckStore.clearError();
     this.editing.set(false);
   }
 
   toggleEdit(flag: boolean): void {
+    this.deckStore.clearError();
+    if (!flag) {
+      this.deckName.set('');
+    }
     this.editing.set(flag);
   }
 
@@ -75,14 +81,12 @@ export class DeckEditor {
   );
 
   removeCard(scryfallId: string): void {
-    if (!this.id()) return;
-
     this.deckStore.removeCard(this.id(), scryfallId);
   }
 
   renameDeck(newName: string): void {
     // have logic for checking validation
-    this.deckStore.renameDeck(this.id(), newName, () => 
+    this.deckStore.renameDeck(this.id(), newName, () =>
       this.toggleEdit(false)
     );
   }
