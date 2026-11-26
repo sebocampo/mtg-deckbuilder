@@ -26,6 +26,33 @@ button {
   }
 }
 
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #8b5cf6, #a855f7);
+  color: white;
+
+  &:hover {
+    filter: brightness(1.1);
+  }
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: #3f465e;
+  color: #e5e7eb;
+
+  &:hover {
+    border-color: #8b5cf6;
+  }
+}
+
 
 .add-cards-button {
   display: inline-flex;

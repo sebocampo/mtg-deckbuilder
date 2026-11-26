@@ -4,10 +4,18 @@
   </a>
 
   @if (deck(); as currentDeck) {
+  @if(editing()) {"
+  <input id="deck-name" type="text" name="newDeckName" [ngModel]="deckName()" (ngModelChange)="deckName.set($event)"
+    maxlength="60" required />
+  <button type="button" class="btn btn-primary" (click)="renameDeck(deckName())">Save</button>
+  <button type="button" class="btn btn-ghost" (click)="toggleEdit(false)">Cancel</button>
+  } @else {
   <h1>{{ currentDeck.name }}</h1>
+  <button type="button" class="btn btn-ghost" (click)="toggleEdit(true)"> Rename </button>
+  }
 
   <p>
-    {{ deckCardCount(currentDeck) }} cards
+    {{ currentDeckCardCount(currentDeck) }} cards
   </p>
 
   <p>
@@ -15,13 +23,13 @@
   </p>
 
   @if(isCommanderDeck()) {
-    <p>Commander:
-      {{ currentDeck.commanderScryfallId ? 'Selected' : 'Not selected' }}
-    </p>
+  <p>Commander:
+    {{ currentDeck.commanderScryfallId ? 'Selected' : 'Not selected' }}
+  </p>
   }
 
 
-  <a class="add-cards-button" [routerLink]="['/decks', deckId, 'add-cards']">
+  <a class="add-cards-button" [routerLink]="['/decks', id(), 'add-cards']">
     + Add Cards
   </a>
 

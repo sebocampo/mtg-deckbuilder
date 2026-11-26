@@ -45,7 +45,7 @@ export class DeckStore {
         });
     }
 
-    renameDeck(id: string, newName: string): void {
+    renameDeck(id: string, newName: string, onSuccess?: () => void): void {
         const updatedName = newName.trim();
         if (!updatedName) {
             this._error.set('Deck name cannot be empty');
@@ -56,6 +56,7 @@ export class DeckStore {
             next: updatedDeck => {
                 this._decks.update(decks => decks.map(deck => deck.id === id ? updatedDeck : deck));
                 this._error.set(null);
+                onSuccess?.();
             },
             error: err => {
                 this._error.set(err.error?.detail ?? 'Error renaming deck');

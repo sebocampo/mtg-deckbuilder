@@ -1,5 +1,5 @@
 
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DeckStore } from '../data-access/deck.store';
 import { CardCacheService } from '../../cards/data-access/card-cache';
@@ -9,10 +9,11 @@ import { MtgCard } from '../../cards/models/mtg-card.model';
 import { AsyncPipe } from '@angular/common';
 import { deckCardCount } from '../models/deck.model';
 import { DeckFormat } from '../models/deck.format';
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-deck-editor',
   standalone: true,
-  imports: [RouterLink, AsyncPipe],
+  imports: [RouterLink, AsyncPipe, FormsModule],
   templateUrl: './deck-editor.html',
   styleUrl: './deck-editor.scss',
 })
@@ -20,13 +21,28 @@ export class DeckEditor {
   private readonly route = inject(ActivatedRoute);
   private readonly deckStore = inject(DeckStore);
   private readonly cardCache = inject(CardCacheService);
-  protected readonly deckCardCount = deckCardCount;
+
+  protected readonly id = input.required<string>();
+
+  protected readonly currentDeckCardCount = deckCardCount;
+
   protected readonly deck = computed(() =>
-    this.deckStore.getDeckById(this.route.snapshot.paramMap.get('id')!)
+    this.deckStore.getDeckById(this.id())
   );
   protected readonly isCommanderDeck = computed(() => this.deck()?.format === DeckFormat.Commander);
 
-  protected readonly deckId = this.route.snapshot.paramMap.get('id');
+
+  protected editing = signal(false);
+
+  private readonly deckName = signal('');
+
+  ngOnInit() {
+    this.editing.set(false);
+  }
+
+  toggleEdit(flag: boolean): void {
+    this.editing.set(flag);
+  }
 
   // Convert our reactive deck signal into an Observable.
   private readonly deck$ = toObservable(this.deck);
@@ -59,10 +75,16 @@ export class DeckEditor {
   );
 
   removeCard(scryfallId: string): void {
-    if (!this.deckId) return;
+    if (!this.id()) return;
 
-    this.deckStore.removeCard(this.deckId, scryfallId);
+    this.deckStore.removeCard(this.id(), scryfallId);
   }
 
+  renameDeck(newName: string): void {
+    // have logic for checking validation
+    this.deckStore.renameDeck(this.id(), newName, () => 
+      this.toggleEdit(false)
+    );
+  }
 
 }
