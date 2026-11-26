@@ -64,11 +64,12 @@ export class DeckStore {
         });
     }
 
-    deleteDeck(id: string): void {
+    deleteDeck(id: string, onSuccess?: () => void): void {
         this.deckService.deleteDeck(id).subscribe({
             next: () => {
                 this._decks.update(decks => decks.filter(deck => deck.id !== id));
                 this._error.set(null);
+                onSuccess?.();
             },
             error: err => {
                 this._error.set(err.error?.detail ?? 'Error deleting deck');
@@ -76,11 +77,12 @@ export class DeckStore {
         });
     }
 
-    setCommander(deckId: string, commanderScryfallId: string): void {
+    setCommander(deckId: string, commanderScryfallId: string, onSuccess?: () => void): void {
         this.deckService.setCommander(deckId, commanderScryfallId).subscribe({
             next: updatedDeck => {
                 this._decks.update(decks => decks.map(deck => deck.id === deckId ? updatedDeck : deck));
                 this._error.set(null);
+                onSuccess?.();
             },
             error: err => {
                 this._error.set(err.error?.detail ?? 'Error setting commander');
@@ -88,11 +90,12 @@ export class DeckStore {
         });
     }
 
-    removeCommander(deckId: string): void {
+    removeCommander(deckId: string, onSuccess?: () => void): void {
         this.deckService.removeCommander(deckId).subscribe({
             next: updatedDeck => {
                 this._decks.update(decks => decks.map(deck => deck.id === deckId ? updatedDeck : deck));
                 this._error.set(null);
+                onSuccess?.();
             },
             error: err => {
                 this._error.set(err.error?.detail ?? 'Error removing commander');
@@ -113,11 +116,12 @@ export class DeckStore {
         });
     }
 
-    updateCardQuantity(deckId: string, card: DeckCard): void {
+    updateCardQuantity(deckId: string, card: DeckCard, onSuccess?: () => void): void {
         this.deckService.updateCardQuantity(deckId, card.scryfallId, card.quantity).subscribe({
             next: updatedDeck => {
                 this._decks.update(decks => decks.map(deck => deck.id === deckId ? updatedDeck : deck));
                 this._error.set(null);
+                onSuccess?.();
             },
             error: err => {
                 this._error.set(err.error?.detail ?? 'Error updating card quantity');
@@ -125,11 +129,12 @@ export class DeckStore {
         });
     }
 
-    removeCard(deckId: string, scryfallId: string): void {
+    removeCard(deckId: string, scryfallId: string, onSuccess?: () => void): void {
         this.deckService.removeCardFromDeck(deckId, scryfallId).subscribe({
             next: updatedDeck => {
                 this._decks.update(decks => decks.map(deck => deck.id === deckId ? updatedDeck : deck));
                 this._error.set(null);
+                onSuccess?.();
             },
             error: err => {
                 this._error.set(err.error?.detail ?? 'Error removing card from deck');

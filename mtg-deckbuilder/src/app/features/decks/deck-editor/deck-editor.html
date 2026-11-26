@@ -4,6 +4,13 @@
   </a>
 
   @if (deck(); as currentDeck) {
+
+  @if (deckToDelete(); as deck) {
+  <app-confirm-dialog title="Delete this deck?"
+    [message]="'&quot;' + deck.name + '&quot; and all its cards will be removed. This cannot be undone.'"
+    (confirmed)="confirmDelete()" (cancelled)="deckToDelete.set(null)" />
+  }
+
   <div class="deck-title">
     @if(editing()) {
     <input id="deck-name" type="text" class="deck-name-input" name="newDeckName" [ngModel]="deckName()"
@@ -15,27 +22,36 @@
     }
     } @else {
     <h1>{{ currentDeck.name }}</h1>
-    <button type="button" class="btn btn-ghost" (click)="toggleEdit(true)"> Rename </button>
+    <button type="button" class="btn btn-ghost btn-sm" (click)="toggleEdit(true)" aria-label="Rename deck"
+      title="Rename deck">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+      </svg>
+    </button>
     }
+    <button type="button" class="btn btn-danger btn-sm push-right"
+      (click)="deckToDelete.set(currentDeck)">Delete</button>
   </div>
-  <p>
-    {{ currentDeckCardCount(currentDeck) }} cards
-  </p>
-
-  <p>
-    {{ "Deck Format: " + currentDeck.format }}
-  </p>
-
-  @if(isCommanderDeck()) {
-  <p>Commander:
-    {{ currentDeck.commanderScryfallId ? 'Selected' : 'Not selected' }}
-  </p>
-  }
-
-
-  <a class="add-cards-button" [routerLink]="['/decks', id(), 'add-cards']">
-    + Add Cards
-  </a>
+  <section class="deck-summary">
+    <div class="summary-stats">
+      <div class="stat">
+        <span class="stat-label">Cards</span>
+        <span class="stat-value">{{ currentDeckCardCount(currentDeck) }}</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Format</span>
+        <span class="stat-value">{{ currentDeck.format }}</span>
+      </div>
+      @if (isCommanderDeck()) {
+      <div class="stat">
+        <span class="stat-label">Commander</span>
+        <span class="stat-value">{{ currentDeck.commanderScryfallId ? 'Selected' : 'Not selected' }}</span>
+      </div>
+      }
+    </div>
+    <a class="add-cards-button" [routerLink]="['/decks', id(), 'add-cards']">+ Add Cards</a>
+  </section>
 
   <section class="deck-cards">
     <h2>Cards in Deck</h2>

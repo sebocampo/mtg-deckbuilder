@@ -1,25 +1,27 @@
 
 import { Component, computed, inject, input, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { DeckStore } from '../data-access/deck.store';
 import { CardCacheService } from '../../cards/data-access/card-cache';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { forkJoin, of, switchMap, catchError, map } from 'rxjs';
 import { MtgCard } from '../../cards/models/mtg-card.model';
 import { AsyncPipe } from '@angular/common';
-import { deckCardCount } from '../models/deck.model';
+import { Deck, deckCardCount } from '../models/deck.model';
 import { DeckFormat } from '../models/deck.format';
 import { FormsModule } from '@angular/forms';
+import { ConfirmDialog } from '../../../shared/ui/confirm-dialog/confirm-dialog';
 @Component({
   selector: 'app-deck-editor',
   standalone: true,
-  imports: [RouterLink, AsyncPipe, FormsModule],
+  imports: [RouterLink, AsyncPipe, FormsModule, ConfirmDialog],
   templateUrl: './deck-editor.html',
   styleUrl: './deck-editor.scss',
 })
 export class DeckEditor {
   private readonly deckStore = inject(DeckStore);
   private readonly cardCache = inject(CardCacheService);
+  private readonly router = inject(Router);
 
   protected readonly id = input.required<string>();
 
@@ -40,6 +42,17 @@ export class DeckEditor {
   ngOnInit() {
     this.deckStore.clearError();
     this.editing.set(false);
+  }
+
+  protected readonly deckToDelete = signal<Deck | null>(null);
+
+  confirmDelete(): void {
+    const deck = this.deckToDelete();
+    if (!deck) return;
+    this.deckStore.deleteDeck(deck.id, () => {
+      this.deckToDelete.set(null);
+      this.router.navigate(['/decks']);
+    });
   }
 
   toggleEdit(flag: boolean): void {
