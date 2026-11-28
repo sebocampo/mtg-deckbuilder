@@ -26,6 +26,8 @@ public record ScryfallResponse(
 
         @JsonProperty("mana_cost") String manaCost,
 
+        @JsonProperty ("oracle_text") String oracleText,
+
         BigDecimal cmc,
 
         String layout,

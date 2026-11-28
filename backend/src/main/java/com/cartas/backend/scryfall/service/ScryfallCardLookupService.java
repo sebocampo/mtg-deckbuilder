@@ -27,7 +27,7 @@ public class ScryfallCardLookupService {
         return cardCache.computeIfAbsent(scryfallId, id -> {
             try {
                 ScryfallResponse response = scryfallClient.getCard(id);
-                return new ScryfallLookupResult(response.oracleId(), response.typeLine());
+                return new ScryfallLookupResult(response.oracleId(), response.typeLine(), response.oracleText());
             } catch (HttpClientErrorException.NotFound e) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown Scryfall card id: " + id);
             } catch (RestClientException e) {

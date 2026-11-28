@@ -214,8 +214,8 @@ public class DeckService {
     }
 
     private static void isCardValidForCommanderSpot(ScryfallLookupResult cardInfo) {
-        if (!cardInfo.isLegendary() || !cardInfo.isCreature()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Commander must be a legendary creature.");
+        if (!cardInfo.isCommanderEligible()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Commander must be a legendary creature or the oracle text mentions this can be a commander.");
         }
     }
 }

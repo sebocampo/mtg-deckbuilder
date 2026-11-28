@@ -3,10 +3,13 @@
 # Endpoints under test:
 #   PUT    /api/decks/{deckId}/commander   body: SetCommanderRequest { commanderScryfallId }
 #   DELETE /api/decks/{deckId}/commander   no body — clears the commander (sets null)
-# Rules under test (Sebastian, Nov 23, 2026):
+# Rules under test (Sebastian, Nov 23, 2026; widened Nov 26, 2026):
 # - Commander is a field on the deck (commander_scryfall_id), NOT a deck_cards row.
 # - The commander must be a LEGENDARY CREATURE (isLegendary + isCreature on the
-#   Scryfall type line) — 400 otherwise. Colour identity / banned lists stay deferred.
+#   Scryfall type line) OR carry "can be your commander" in its oracle_text
+#   (isCommander() on ScryfallLookupResult) — 400 otherwise. Backgrounds stay
+#   rejected: they are only commanders next to a "choose a Background" partner,
+#   and Partner support is deferred. Colour identity / banned lists stay deferred.
 # - Commander and the 99 are mutually exclusive, by ORACLE identity:
 #   setCommander rejects a card already in the deck; addCard rejects the commander.
 # - Unknown printing -> 400 (via the same Scryfall lookup as add-card),
@@ -28,6 +31,15 @@ $zacama      = "05c5a9a8-badd-43ab-8408-a13e75407681"
 $zacamaAlt   = "5aa75f2b-53c5-47c5-96d2-ab796358a96f"
 # Sol Ring (LEA) — NOT legendary: the legendary-gate probe, and an ordinary card.
 $solRing     = "c4300d24-1cae-4dd5-be7e-38cc677cf5bd"
+# Tasha, the Witch Queen (CLB #364) — Legendary Planeswalker whose oracle text
+# ends "Tasha, the Witch Queen can be your commander." Accepted under the new rule.
+$tasha       = "b1c5f679-82d0-4434-9f13-d39ad57282b8"
+# Jace, the Mind Sculptor — Legendary Planeswalker with NO "can be your commander"
+# text. The control proving acceptance is the phrase, not "legendary planeswalker".
+$jace        = "c8817585-0d32-4d56-9142-0d29512e86a9"
+# Acolyte of Bahamut (CLB #212) — Legendary Enchantment — Background. Only a
+# commander next to a "choose a Background" partner; Partner is deferred, so 400.
+$acolyte     = "b0260e1f-ff6a-4ef3-bef7-8c77f8413500"
 $unknown     = "00000000-0000-0000-0000-000000000000"
 $missingDeck = "00000000-0000-0000-0000-000000000000"
 
@@ -93,11 +105,27 @@ Check "PUT non-legendary (Sol Ring) -> 400" ($r.Code -eq 400)
 $deck = Get-Deck $deckId
 Check "legendary rejection changed nothing (still Pantlaza)" ($deck.commanderScryfallId -eq $pantlaza)
 
+# ---------- "Can be your commander" cards are accepted; other planeswalkers and Backgrounds are not ----------
+$r = Put-Commander $deckId $tasha
+Check "PUT Tasha (can be your commander planeswalker) -> 200" ($r.Code -eq 200)
+$deck = Get-Deck $deckId
+Check "GET shows Tasha as commander" ($deck.commanderScryfallId -eq $tasha)
+
+$r = Put-Commander $deckId $jace
+Check "PUT ordinary planeswalker (Jace, the Mind Sculptor) -> 400" ($r.Code -eq 400)
+$deck = Get-Deck $deckId
+Check "planeswalker rejection changed nothing (still Tasha)" ($deck.commanderScryfallId -eq $tasha)
+
+$r = Put-Commander $deckId $acolyte
+Check "PUT Background (Acolyte of Bahamut) -> 400" ($r.Code -eq 400)
+$deck = Get-Deck $deckId
+Check "Background rejection changed nothing (still Tasha)" ($deck.commanderScryfallId -eq $tasha)
+
 # ---------- PUT replaces the commander (no append, no second slot) ----------
 $r = Put-Commander $deckId $zacama
 Check "PUT Zacama (swap) -> 200" ($r.Code -eq 200)
 $deck = Get-Deck $deckId
-Check "GET shows Zacama as commander, Pantlaza gone" ($deck.commanderScryfallId -eq $zacama)
+Check "GET shows Zacama as commander, Tasha gone" ($deck.commanderScryfallId -eq $zacama)
 
 # ---------- Commander is separate from the cards list ----------
 $code = Add-Card $deckId $solRing
